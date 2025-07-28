@@ -1,0 +1,6 @@
+take_home_exam/
+corn_yield_csv/
+
+*.parquet
+*.txt
+*.csv
