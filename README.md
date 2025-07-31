@@ -43,12 +43,6 @@ especially after 1960 due to hybrid crops, with fluctuations likely from weather
 
 ![avg_yield](./images/avg_yield_states.png)
 
-- Examinating the relationships between weather patterns and yield outcomes, several things shown up: <br>
-    - A sharp decrease in yield around 2012;<br>
-    - The decrease in yield coincides with a drastic drop in total rainfall; <br>
-    - Predictably, in addition to the decrease in rainfall, soil moisture also decreased. <br>
-    - During the same period, it can be observed that the average maximum temperatures were the highest (drought). <br>
-    - Average maximum temperatures around 25 degrees, combined with good rainfall/soil moisture, allowed for the best yields. <br>
  
 ### 4. Feature Engineering
 
@@ -64,6 +58,16 @@ It’s better to have less-designed, biologically meaningful features than a lot
     - `tmax_mean_3yr`: to capture longer-term trends for temperature.
     - `precip_mean_3yr`: to capture longer-term trends of precipitations.
 
+![avg_yield](./images/mtrx_corr_yield_weather.png)
+
+- Examinating the relationships between weather patterns and yield outcomes, several things shown up: <br>
+    - A sharp decrease in yield around 2012;<br>
+    - The decrease in yield coincides with a drastic drop in total rainfall; <br>
+    - Predictably, in addition to the decrease in rainfall, soil moisture also decreased. <br>
+    - During the same period, it can be observed that the average maximum temperatures were the highest (drought). <br>
+    - Average maximum temperatures around 25 degrees, combined with good rainfall/soil moisture, allowed for the best yields. <br>
+
+![avg_yield](./images/feature_comp_yield.png)
 
 ### 5. Model Development & Evaluation
 
