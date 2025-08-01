@@ -71,20 +71,62 @@ It’s better to have less-designed, biologically meaningful features than a lot
 
 ### 5. Model Development & Evaluation
 
-- Train one or more models to predict national yield.
-- Evaluate performance using recent years as holdout.
-- Include performance metrics and interpretability (if applicable).
+As initial experiment i use SARIMAX/SARIMAX with all data from 1910. these methods assumes stationarity and regular patterns over time,  <br>
+which may not fully capture yield variations caused by highly variable weather patterns or regional effects. and then I have incorporated the features variables, <br>
+but with only 24 years of overlapping yield + weather data, obviously its predictive power is limited. 
+
+- ML models:
+    To ensure consistency and valid feature-target relationships, I have aggregated weather data to yearly resolution, aligning it with the annual yield data at county level. <br>
+    With this method it was possible:
+    - Increase the effective sample size by modeling many counties across multiple years (instead of just one national average per year).
+    - Exploit spatial variation because weather effects vary by region, and modeling at the county level let me capture these localized patterns.
+
+    | Model                               | Why                                                                                                       |
+    | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+    | **Linear Regression**               | Baseline model to understand linear relationships and feature importance. Simple, interpretable.                          |
+    | **ElasticNet Regression**           | Regularized regression to prevent overfitting and handle multicollinearity between weather features.                      |
+    | **Support Vector Regression (SVR)** | Good for non-linear relationships; works well with smaller datasets and can model complex feature interactions.           |
+    | **Random Forest Regression**        | Non-parametric, captures non-linearities and feature interactions. Robust to overfitting and provides feature importance. |
+
 
 ### 6. Predict 2024 Yield
 
-- Create input variables.
-- Make a national yield prediction with uncertainty estimates.
-- Describe assumptions behind missing/future data handling.
+2024 weather was not fully available, especially for the latter part of the growing season (e.g. July–September), which are crucial for final yield determination.
+My approach was to use the historical average for each feature across previous years as a proxy for the missing 2024 values. This offered was fast, stable, and unbiased estimate.
+
+One potential extension is to incorporate short-term weather forecasts or use time-series models to predict future weather features.
+
+Results for the different models:
+
+![mean_pred](./images/mean_pred.png)
+
+All models provided reasonable yield predictions, but their performance varied significantly. 
+The Support Vector Regression (SVR) model performed best, with the lowest error and a strong R² (0.78), offering accurate and stable predictions. 
+Linear Regression showed moderate explanatory power but high variability, reflecting its sensitivity to the complex nature of agricultural data. 
+Random Forest captured some non-linear patterns but had inconsistent results with high variance.
 
 ### 7. Reporting
 
-- Summarize your modeling process, prediction, and findings.
-- Include a brief discussion of limitations and potential improvements.
+
+**Key Findings:**
+- Weather plays a significant role in annual yield fluctuations, especially drought years.
+
+Yield is highest when:
+- Tmax is ~25°C
+- Rainfall and soil moisture are above average.
+- Spatial modeling at county level enabled richer pattern recognition than national-only data.
+- The SVR model captures non-linear interactions and is resilient to limited data volume
+
+**Limitations:**
+- Weather gaps: Proxying with historical averages for 2024 introduces uncertainty.
+- Data scope: Only 24 years of overlapping yield-weather data limits the training sample.
+- No management factors: Models do not account for irrigation, hybrid varieties, fertilizer usage, or pest events.
+- Aggregation tradeoff: Yearly aggregation removes intra-seasonal dynamics.
+
+**Future Improvements:**
+- Integrate season weather: Use real data or forecasts for July–September weather features.
+- Add agronomic variables: Incorporate crop type, irrigation levels, planting dates, etc.
+- Use deep learning models: LSTM or transformer-based models could model sequential weather-yield dynamics.
 
 ---
 
