@@ -57,6 +57,9 @@ It’s better to have less-designed, biologically meaningful features than a lot
     - `precip_mean_lag1`: to capture carry-over effects of precipitations.
     - `tmax_mean_3yr`: to capture longer-term trends for temperature.
     - `precip_mean_3yr`: to capture longer-term trends of precipitations.
+  
+- Feature selection:
+  To build a machine learning model to predict Yield, we want features that have a strong correlation with Yield but they shouldn't be too redundant with each other (to avoid multicollinearity).
 
 ![avg_yield](./images/mtrx_corr_yield_weather.png)
 
@@ -110,6 +113,7 @@ Random Forest captured some non-linear patterns but had inconsistent results wit
 
 **Key Findings:**
 - Weather plays a significant role in annual yield fluctuations, especially drought years.
+- Strong positive correlation betweeen long-term water availability (`precip_sum_3yr`)
 
 Yield is highest when:
 - Tmax is ~25°C
@@ -124,6 +128,7 @@ Yield is highest when:
 - Aggregation tradeoff: Yearly aggregation removes intra-seasonal dynamics.
 
 **Future Improvements:**
+- Cross-validation: Applying K-Fold cross-validation allows for a better estimation of the model's actual performance. 
 - Integrate season weather: Use real data or forecasts for July–September weather features.
 - Add agronomic variables: Incorporate crop type, irrigation levels, planting dates, etc.
 - Use deep learning models: LSTM or transformer-based models could model sequential weather-yield dynamics.
