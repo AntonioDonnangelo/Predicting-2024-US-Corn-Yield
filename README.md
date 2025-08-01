@@ -14,7 +14,7 @@ Build a model to **predict the 2024 U.S. national corn yield (bu/acre)** using h
 
 ### 1. Data Acquisition
 
-- Download **historical corn yield data** at county, state, and national level from USDA quick stats trough the [API] (https://quickstats.nass.usda.gov/api) provided.
+- Download **historical corn yield data** at county, state, and national level from USDA quick stats trough the [API](https://quickstats.nass.usda.gov/api) provided.
 - Load **daily county-level weather data** already in possession with the project, *wx_hist_df.parquet*.
 
 ### 2. Data Sanity Check
