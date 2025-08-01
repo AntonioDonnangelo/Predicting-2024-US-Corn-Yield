@@ -19,10 +19,10 @@ Build a model to **predict the 2024 U.S. national corn yield (bu/acre)** using h
 
 ### 2. Data Sanity Check
 
-- Merging data of yield in one .csv since the request allowed not more than 50.0000 records togheter
+- Merging data of yield in one .csv since the request allowed not more than 50.000 records togheter
 - Validation of the yield data and weather data.
 - Handling missing values, check for unit consistency, and verifying dimensions.
-- Different granyularity: The yield data from USDA quick stats is from 1910 at year level and the weather data is at daily level from 2000. <br>
+- Different granularity: The yield data from USDA quick stats is from 1910 at year level and the weather data is at daily level from 2000. <br>
 
 ### 3. Exploratory Data Analysis
 
@@ -31,7 +31,7 @@ especially after 1960 due to hybrid crops, with fluctuations likely from weather
 
 ![corn_yield](./images/corn_yield_over_years.png)
 
-- First 5 states with the highest average yield where:
+- First 5 states with the highest average yield were:
     
     | State Name  | Value      |
     |-------------|------------|
@@ -46,17 +46,17 @@ especially after 1960 due to hybrid crops, with fluctuations likely from weather
  
 ### 4. Feature Engineering
 
-- Derive relevant features from the raw weather data: <br>
-It’s better to have less-designed, biologically meaningful features than a lot of noisy or redundant features. For this reason the feature feature engineering included: <br>
+- Derive relevant features from the raw weather data: 
+It’s better to have biologically meaningful features than a lot of noisy or redundant features. For this reason the feature feature engineering included: 
     - **Biological and stress features**: <br>
     - `soil_moisture_delta`: Captures the difference between surface and sub-surface soil moisture.
-    - `term_stress`: If high, stress plants by disrupting respiration and photosynthesis.
+    - `term_stress`: Captures stress of plants by disrupting respiration and photosynthesis.
     - `dry_heat_index`: Combines heat and dryness into a single stress indicator. 
     - **Rolling Features and multi-year rolling averages**: to capture temporal patterns <br>
     - `tmax_mean_lag1`: to capture carry-over effects of temperature.
     - `precip_mean_lag1`: to capture carry-over effects of precipitations.
     - `tmax_mean_3yr`: to capture longer-term trends for temperature.
-    - `precip_mean_3yr`: to capture longer-term trends of precipitations.
+    - `precip_mean_3yr`: to capture longer-term trends for precipitations.
   
 - Feature selection:
   To build a machine learning model to predict Yield, we want features that have a strong correlation with Yield but they shouldn't be too redundant with each other (to avoid multicollinearity).
@@ -74,9 +74,7 @@ It’s better to have less-designed, biologically meaningful features than a lot
 
 ### 5. Model Development & Evaluation
 
-As initial experiment i use SARIMAX/SARIMAX with all data from 1910. these methods assumes stationarity and regular patterns over time,  <br>
-which may not fully capture yield variations caused by highly variable weather patterns or regional effects. and then I have incorporated the features variables, <br>
-but with only 24 years of overlapping yield + weather data, obviously its predictive power is limited. 
+As initial experiment I used SARIMA/SARIMAX with all data from 1910. These methods assumes stationarity and regular patterns over time, which may not fully capture yield variations caused by highly variable weather patterns or regional effects. Then I have incorporated the features variables, but with only 24 years of overlapping yield + weather data, obviously its predictive power is limited. 
 
 - ML models:
     To ensure consistency and valid feature-target relationships, I have aggregated weather data to yearly resolution, aligning it with the annual yield data at county level. <br>
@@ -94,8 +92,8 @@ but with only 24 years of overlapping yield + weather data, obviously its predic
 
 ### 6. Predict 2024 Yield
 
-2024 weather was not fully available, especially for the latter part of the growing season (e.g. July–September), which are crucial for final yield determination.
-My approach was to use the historical average for each feature across previous years as a proxy for the missing 2024 values. This offered was fast, stable, and unbiased estimate.
+Weather data for 2024 was not fully available, especially for the latter part of the growing season (e.g. July–September), which are crucial for final yield determination.
+My approach was to use the historical average for each feature across previous years as a proxy for the missing 2024 values. This was fast, stable, and unbiased estimate.
 
 One potential extension is to incorporate short-term weather forecasts or use time-series models to predict future weather features.
 
@@ -113,13 +111,14 @@ Random Forest captured some non-linear patterns but had inconsistent results wit
 
 **Key Findings:**
 - Weather plays a significant role in annual yield fluctuations, especially drought years.
-- Strong positive correlation betweeen long-term water availability (`precip_sum_3yr`)
+- Strong positive correlation between long-term water availability (`precip_sum_3yr`)
+- Spatial modeling at county level enabled richer pattern recognition than national-only data.
+- The SVR model captures non-linear interactions and is resilient to limited data volume
 
 Yield is highest when:
 - Tmax is ~25°C
 - Rainfall and soil moisture are above average.
-- Spatial modeling at county level enabled richer pattern recognition than national-only data.
-- The SVR model captures non-linear interactions and is resilient to limited data volume
+
 
 **Limitations:**
 - Weather gaps: Proxying with historical averages for 2024 introduces uncertainty.
