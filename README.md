@@ -92,6 +92,7 @@ It is also possible to treat the variables are as independent observations. In t
     - Increase the effective sample size by modeling many counties across multiple years (instead of just one national average per year).
     - Exploit spatial variation because weather effects vary by region, and modeling at the county level let me capture these localized patterns.
   
+  
     | **Model**                          | **Why**                                                                                                                  |
     |-----------------------------------|--------------------------------------------------------------------------------------------------------------------------|
     | **Linear Regression**             | Baseline model to understand linear relationships and feature importance. Simple interpretable.                        |
