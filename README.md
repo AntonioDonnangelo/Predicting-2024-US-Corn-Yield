@@ -4,25 +4,30 @@
 
 Build a model to **predict the 2024 U.S. national corn yield (bu/acre)** using historical USDA yield data and weather data. The final output includes:
 
-- A **point prediction** and **uncertainty estimate** for 2024.
-- An evaluation of model performance on past years.
-- Clear documentation of assumptions, logic, process, and key findings.
+- A **point prediction** and **uncertainty estimate** for 2024
+- An evaluation of model performance on past years
+- Clear documentation of assumptions, logic, process, and key findings
 
 ---
+## Requirements
+
+The necessary dependencies for this project can be found in the requirements folder. This folder includes files for both Conda and pip environments.
+
+- Python version: 3.10.10
 
 ## Project Outline
 
 ### 1. Data Acquisition
 
-- Download **historical corn yield data** at county, state, and national level from USDA quick stats trough the [API](https://quickstats.nass.usda.gov/api) provided.
-- Load **daily county-level weather data** already in possession with the project, *wx_hist_df.parquet*.
+- Download **historical corn yield data** at county, state, and national levels from USDA quick stats through the [API](https://quickstats.nass.usda.gov/api) provided
+- Load **daily county-level weather data** already in possession with the project, *wx_hist_df.parquet*
 
 ### 2. Data Sanity Check
 
 - Merging data of yield in one .csv since the request allowed not more than 50.000 records togheter
-- Validation of the yield data and weather data.
-- Handling missing values, check for unit consistency, and verifying dimensions.
-- Different granularity: The yield data from USDA quick stats is from 1910 at year level and the weather data is at daily level from 2000. <br>
+- Validation of the yield data and weather data
+- Handling missing values, check for unit consistency, and verifying dimensions
+- Different granularity: yield data from USDA Quick Stats is available at the annual level starting from 1910, whereas weather data is at daily resolution starting from 2000
 
 ### 3. Exploratory Data Analysis
 
@@ -31,7 +36,7 @@ Build a model to **predict the 2024 U.S. national corn yield (bu/acre)** using h
 
 ![corn_yield](./images/corn_yield_over_years.png)
 
-After the aggregation of the yield for every state, the first 5 states with the highest average yield were:
+After aggregating yield by state, the top 5 states with the highest average yield were:
     
 | State Name  | Yield (bu/acre) |
 |-------------|-----------------|
@@ -48,16 +53,16 @@ After the aggregation of the yield for every state, the first 5 states with the 
 ### 4. Feature Engineering
 
 - Derive relevant features from the raw weather data: 
-It’s better to have biologically meaningful features than a lot of noisy or redundant features. For this reason the feature  engineering included the calculation of: 
+It is preferable to have fewer biologically meaningful features rather than many noisy or redundant features. For this reason the feature  engineering included the calculation of: 
     - **Biological and stress features**: <br>
-    - `soil_moisture_delta`: Captures the difference between surface and sub-surface soil moisture
-    - `term_stress`: Captures stress of plants by disrupting respiration and photosynthesis
-    - `dry_heat_index`: Combines heat and dryness into a single stress indicator
+      - `soil_moisture_delta`: captures the difference between surface and sub-surface soil moisture
+      - `term_stress`: captures stress of plants by disrupting respiration and photosynthesis
+      - `dry_heat_index`: combines heat and dryness into a single stress indicator
     - **Rolling Features and multi-year rolling averages**: to capture temporal patterns <br>
-    - `tmax_mean_lag1`: to capture carry-over effects of temperature
-    - `precip_mean_lag1`: to capture carry-over effects of precipitations
-    - `tmax_mean_3yr`: to capture longer-term trends for temperature
-    - `precip_mean_3yr`: to capture longer-term trends for precipitations
+      - `tmax_mean_lag1`: captures carry-over effects of temperature
+      - `precip_mean_lag1`: captures carry-over effects of precipitations
+      - `tmax_mean_3yr`: captures longer-term trends for temperature
+      - `precip_mean_3yr`: captures longer-term trends for precipitations
   
 - Feature selection:
   To build a machine learning model to predict yield, we want features that are correlated with yield but they shouldn't be too redundant with each other (to avoid multicollinearity). Highly redundant features were therefore removed to ensure each input contributes unique and meaningful information.
@@ -76,18 +81,18 @@ It’s better to have biologically meaningful features than a lot of noisy or re
 
 ### 5. Model Development & Evaluation
 
-My reasoning followed these steps:
+The modeling approach followed these steps:
 
 - I modeled using only the time series containing yield data since 1910, without including weather variables, to establish a reference baseline.
 - I incorporated annual weather data using aggregated information.
 - I built machine learning models using county-level data to increase the number of usable observations.
   
-At this point, I faced a choice: to use machine learning models that treat each observation independently, or to consider that temporal order matters, because past values influence future ones. Since yield in the previous year is correlated with yield in the current year, I chose to treat the data as a time series in order to capture the dependence between past and future values of the same variable.
+At this point, I faced a choice: either treat each observation independently, or to consider that temporal order matters, because past values influence future ones. Since yield in the previous year is correlated with yield in the current year, I chose to treat the data as a time series in order to capture the dependency between past and future values of the same variable.
 
-It is also possible to treat the variables are as independent observations. In that case, while the predictive task is no longer a true forecast, it allows for stronger statistical validation on randomly shuffled samples but breaks real-world temporal dependencies and might overestimate performance.
+It is also possible to treat the variables as independent observations. In that case, while the predictive task is no longer a true forecast, it allows for stronger statistical validation on randomly shuffled samples but breaks real-world temporal dependencies and might overestimate performance.
 
 - ML models:
-    To ensure consistency and valid feature-target relationships, I have aggregated weather data to yearly resolution, aligning it with the annual yield data at county level. <br>
+    To ensure consistency and valid feature-target relationships, I have aggregated weather data to yearly resolution, aligning it with the annual yield data at county level. 
     With this method it was possible:
     - Increase the effective sample size by modeling many counties across multiple years (instead of just one national average per year).
     - Exploit spatial variation because weather effects vary by region, and modeling at the county level let me capture these localized patterns.
@@ -95,7 +100,7 @@ It is also possible to treat the variables are as independent observations. In t
   
     | **Model**                          | **Why**                                                                                                                  |
     |-----------------------------------|--------------------------------------------------------------------------------------------------------------------------|
-    | **Linear Regression**             | Baseline model to understand linear relationships and feature importance. Simple interpretable.                        |
+    | **Linear Regression**             | Baseline model to understand linear relationships and feature importance. Simple, interpretable.                        |
     | **Support Vector Regression (SVR)** | Good for non-linear relationships; works well with smaller datasets and can model complex feature interactions.         |
     | **Random Forest Regression**      | Non-parametric, captures non-linearities and feature interactions. Robust to overfitting and provides feature importance.|
     | **XGBoost**                       | Gradient boosting framework that handles non-linearity well, optimizes performance, and includes regularization.         |
@@ -152,9 +157,9 @@ Overall, Random Forest excelled in average accuracy, SVR in consistency, and XGB
 - Aggregation tradeoff: Yearly aggregation removes intra-seasonal dynamics
 
 **Future Improvements:** 
-- Hyperparameter tuning: Optimize models with techniques like randomized search to enhance predictive performance.
+- Hyperparameter tuning: Optimize models with techniques like randomized search to enhance predictive performance
 - Integrate season weather: Use real data or forecasts for July–September 2024 weather features
 - Add agronomic variables: Incorporate crop type, irrigation levels, planting dates, etc
-- Scenario modeling: simulate how changes in specific factors (e.g. rainfall increase, drought onset) would impact yield to inform adaptive strategies.
+- Scenario modeling: simulate how changes in specific factors (e.g. rainfall increase, drought onset) would impact yield to inform adaptive strategies
 
 ---
