@@ -33,13 +33,14 @@ Build a model to **predict the 2024 U.S. national corn yield (bu/acre)** using h
 
 After the aggregation of the yield for every state, the first 5 states with the highest average yield were:
     
-    | State Name  | Yield (bu/acre)|
-    |-------------|----------------|
-    | IDAHO       | 129.907670     |
-    | CALIFORNIA  | 119.936595     |
-    | UTAH        | 111.171765     |
-    | NEW YORK    | 109.179003     |
-    | ARIZONA     | 107.542978     |
+| State Name  | Yield (bu/acre) |
+|-------------|-----------------|
+| IDAHO       | 129.91          |
+| CALIFORNIA  | 119.94          |
+| UTAH        | 111.17          |
+| NEW YORK    | 109.18          |
+| ARIZONA     | 107.54          |
+
 
 ![avg_yield](./images/avg_yield_states.png)
 
@@ -81,7 +82,9 @@ My reasoning followed these steps:
 - I incorporated annual weather data using aggregated information.
 - I built machine learning models using county-level data to increase the number of usable observations.
   
-At this point, I faced a choice: to use machine learning models that treat each observation independently, or to consider that temporal order matters—because past values influence future ones. Since yield in the previous year is correlated with yield in the current year, I chose to treat the data as a time series in order to capture the dependence between past and future values of the same variable.
+At this point, I faced a choice: to use machine learning models that treat each observation independently, or to consider that temporal order matters, because past values influence future ones. Since yield in the previous year is correlated with yield in the current year, I chose to treat the data as a time series in order to capture the dependence between past and future values of the same variable.
+
+It is also possible to treat the variables are as independent observations. In that case, while the predictive task is no longer a true forecast, it allows for stronger statistical validation on randomly shuffled samples but breaks real-world temporal dependencies and might overestimate performance.
 
 - ML models:
     To ensure consistency and valid feature-target relationships, I have aggregated weather data to yearly resolution, aligning it with the annual yield data at county level. <br>
@@ -104,7 +107,7 @@ Weather data for 2024 was not fully available, especially for the latter part of
 My approach was to use the historical average for each feature across previous years as a proxy for the missing 2024 values. This was fast, stable, and unbiased estimate.
 
 
-Results for the different models:
+Mean prediction across the different models:
 
 ![mean_pred](./images/mean_pred.png)
 
@@ -112,11 +115,24 @@ All models provided reasonable yield predictions, but their performance varied s
 
 Support Vector Regression (SVR) delivered the strongest overall performance, with the highest R² (0.51), lowest MAE and MSE, and remarkably low standard deviation. Its ability to model nonlinear boundaries while maintaining generalization makes it well-suited to agricultural datasets.
 
-XGBoost also performed well, with competitive error metrics and moderately stable predictions. It leverages gradient boosting and regularization to capture complex feature relationships, making it ideal for data with nonlinear patterns—although it showed slight underestimation in yield.
+XGBoost also performed well, with competitive error metrics and moderately stable predictions. It leverages gradient boosting and regularization to capture complex feature relationships, making it ideal for data with nonlinear patterns, although it showed slight underestimation in yield.
 
-Random Forest provided the closest mean prediction to the actual yield (–0.68), but lower R² and high variance suggest it captures nonlinearities inconsistently. Its ensemble nature allows for flexibility, yet the variability in output reflects uneven fit quality across samples.
+Random Forest provided the closest mean prediction to the actual yield, but lower R² and high variance suggest it captures nonlinearities inconsistently. Its ensemble nature allows for flexibility, yet the variability in output reflects uneven fit quality across samples.
 
 Linear Regression, being purely linear, struggled to capture the depth of the relationships present. Its low R² and relatively high error metrics underline its limitations in modeling interactions and nonlinear effects within the weather and yield data.
+
+
+**Model Performance Overview:**
+
+Overall, Random Forest excelled in average accuracy, SVR in consistency, and XGBoost in general reliability.
+
+| Model                   | Mean Prediction   | Δ from Actual | Std Dev        | Avg R² | MAE   | MSE    |
+|------------------------|-------------------|---------------|----------------|--------|-------|--------|
+| Support Vector Regression | 160.06 bu/acre    | +5.05         | 0.74 bu/acre    | 0.506  | 18.57 | 572.98 |
+| Random Forest          | 154.36 bu/acre    | -0.65         | 32.10 bu/acre   | 0.398  | 20.58 | 695.84 |
+| XGBoost                | 150.09 bu/acre    | -4.92         | 4.52 bu/acre    | 0.486  | 18.91 | 594.77 |
+| Linear Regression      | 137.43 bu/acre    | -17.58        | 17.79 bu/acre   | 0.115  | 25.31 | 1025.46 |
+
 
 ### 7. Reporting
 
