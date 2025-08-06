@@ -2,7 +2,7 @@
 
 ## Objective
 
-Build a model to **predict the 2024 U.S. national corn yield (bu/acre)** using historical USDA yield data and weather data. The final output includes:
+Building and comparing different ML models to predict the **2024 U.S. national corn yield (bu/acre)** using historical USDA yield data and weather data. The final output includes:
 
 - A **point prediction** and **uncertainty estimate** for 2024
 - An evaluation of model performance on past years
