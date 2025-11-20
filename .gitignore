@@ -1,6 +1,5 @@
-take_home_exam/
+guide/
 corn_yield_csv/
 
 *.parquet
-*.txt
-*.csv
+*API_key.txt
